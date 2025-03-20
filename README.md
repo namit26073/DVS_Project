@@ -3,10 +3,10 @@
 ## Team Report
 
 ### Team Achievements:
-We developed an Optical Music Recognition (OMR) system focused on accurately identifying and segmenting full notes from sheet music images. Our implementation leverages techniques learned from **Lab 4: Morphological Image Processing** and **Lab 5: Segmentation and Feature Detection**.
+We developed an Optical Music Recognition (OMR) system focused on accurately identifying and segmenting full notes from sheet music images. 
 
 **Preprocessing Stage:**
-- **Adaptive Binarization (Lab 5)**  
+- **Adaptive Binarization**  
   Enhances contrast and clearly separates notes from the background.
   
 - **Morphological Processing (Lab 4)**  
