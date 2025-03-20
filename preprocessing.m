@@ -2,7 +2,8 @@ clear all; close all;
 
 img = imread('images/whole3.jpg');
 grayImg = rgb2gray(img);
-
+figure;
+imshow(grayImg);    
 % using gamma transform to fix get rid of yellowness from old pictures
 r = double(grayImg);
 k = mean2(r);
@@ -51,8 +52,10 @@ endRows = find(changes == -1) - 1;
 
 padding = 10; % padding around each line so notes above staff are still detected
 staffSegments = {};
-
-for i = 1:length(startRows)
+% Create a single figure with subplots
+figure;
+numSegments = length(startRows);
+for i = 1:numSegments
     row_start = max(startRows(i)-padding, 1);
     row_end = min(endRows(i)+padding, size(final_cleaned,1));
 
@@ -60,6 +63,7 @@ for i = 1:length(startRows)
     segment = final_cleaned(row_start:row_end, :);
     staffSegments{i} = segment;
 
-    figure; imshow(staffSegments{i});
-    title(['Line of music', num2str(i)]);
+    subplot(1, numSegments, i); % adjust layout if needed (e.g., rows vs. columns)
+    imshow(staffSegments{i});
+    title(['Line of music ', num2str(i)]);
 end
