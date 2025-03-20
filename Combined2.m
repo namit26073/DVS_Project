@@ -2,7 +2,7 @@ clear variables;
 close all;
 
 %% PARAMETERS (tweak these if needed)
-gammaE = 0.9;          % Gamma correction exponent
+gammaE = 2;          % Gamma correction exponent
 threshSensitivity = 0.4;  % Sensitivity for adaptive thresholding
 lineLength_staff = 100;  % Length for staff line structuring element
 diskRadius_notes = 2;   % Radius for morphological closing on notes
@@ -16,6 +16,28 @@ lineLength_merge = 10;  % For dilating after closing
 % Read the full image and convert to grayscale
 img = imread('old4.jpg');
 grayImg = rgb2gray(img);
+border_percent = 0.02; % 2% of the image size
+border_h = round(size(grayImg, 1) * border_percent);
+border_w = round(size(grayImg, 2) * border_percent);
+
+% Create a mask that removes the border
+mask = true(size(grayImg));
+mask(1:border_h,:) = false; % Top border
+mask(end-border_h+1:end,:) = false; % Bottom border
+mask(:,1:border_w) = false; % Left border
+mask(:,end-border_w+1:end) = false; % Right border
+
+% Optional: More aggressive method using morphological operations
+% Clean up noise and specks using morphological opening
+se_clean = strel('disk', 3);
+mask_cleaned = imopen(mask, se_clean);
+
+% Apply additional median filtering to the grayscale image
+grayImg_filtered = medfilt2(grayImg, [3 3]);
+
+% Use the mask for further processing by replacing border pixels with white
+grayImg_masked = grayImg_filtered;
+grayImg_masked(~mask_cleaned) = 255; % Set borders to white
 
 % Gamma transform to reduce yellowness from old pictures
 r = double(grayImg);
@@ -189,3 +211,122 @@ for k = 1:length(allNoteNames)
     end
 end
 fprintf('\n');
+
+%% Additional Figures for Major Instances (Overall Processing Stages)
+% 1. Original Image
+figure;
+imshow(img);
+title('Original Image');
+
+% 2. Gamma Corrected Image
+figure;
+imshow(g);
+title('Gamma Corrected Image');
+
+% 3. Binarized Image after Adaptive Thresholding (inverted)
+figure;
+imshow(BW);
+title('Binarized Image (After Adaptive Thresholding)');
+
+% 4. Extracted Staff Lines
+figure;
+imshow(staff_lines);
+title('Extracted Staff Lines');
+
+% 5. Notes Isolated by Removing Staff Lines (notes_no_lines)
+figure;
+imshow(notes_no_lines);
+title('Notes without Staff Lines');
+
+% 6. Final Cleaned Image (Staff Lines + Filtered Note Heads)
+figure;
+imshow(final_cleaned);
+title('Final Cleaned Image (Staff Lines + Notes)');
+
+% 7. Staff Segments (only segments with at least 5 staff lines)
+for i = 1:length(staffSegments)
+    BW_segment = staffSegments{i};
+    se_line_erase = strel('line', lineLength_erase, 0);
+    BW_staff = imerode(BW_segment, se_line_erase);
+    staffProps = regionprops(BW_staff, 'Centroid');
+    staffLinesY = [];
+    for sp = 1:length(staffProps)
+        staffLinesY = [staffLinesY, staffProps(sp).Centroid(2)];
+    end
+    if length(staffLinesY) < 5
+        continue;
+    end
+    figure;
+    imshow(BW_segment);
+    title(sprintf('Segment %d (>=5 staff lines)', i));
+end
+
+%% Morphological Operations Example for One Valid Segment
+% Find the first segment with at least 5 staff lines
+chosenSegment = [];
+for i = 1:length(staffSegments)
+    seg = staffSegments{i};
+    se_line_erase = strel('line', lineLength_erase, 0);
+    BW_staff_temp = imerode(seg, se_line_erase);
+    staffProps = regionprops(BW_staff_temp, 'Centroid');
+    staffLinesY = [];
+    for sp = 1:length(staffProps)
+        staffLinesY = [staffLinesY, staffProps(sp).Centroid(2)];
+    end
+    if length(staffLinesY) >= 5
+        chosenSegment = seg;
+        break;
+    end
+end
+
+if ~isempty(chosenSegment)
+    % Compute the intermediate morphological operations for the chosen segment
+    % Original Segment
+    ex_segment = chosenSegment;
+    
+    % Erosion (remove staff lines)
+    se_line_erase = strel('line', lineLength_erase, 0);
+    ex_BW_staff = imerode(ex_segment, se_line_erase);
+    
+    % Dilation of eroded image
+    se_line_dilate = strel('line', lineLength_dilate, 0);
+    ex_BW_staff_dilated = imdilate(ex_BW_staff, se_line_dilate);
+    
+    % Staff removal result
+    ex_BW_noStaff = ex_segment & ~ex_BW_staff_dilated;
+    
+    % Morphological closing
+    se_fill = strel('disk', diskRadius_fill);
+    ex_BW_filled = imclose(ex_BW_noStaff, se_fill);
+    
+    % Final dilation (merging)
+    se_horiz = strel('line', lineLength_merge, 0);
+    ex_BW_merged = imdilate(ex_BW_filled, se_horiz);
+    
+    % Display the intermediate results for the chosen segment
+    figure;
+    imshow(ex_segment);
+    title('Example Segment: Original');
+    
+    figure;
+    imshow(ex_BW_staff);
+    title('Example Segment: After Erosion');
+    
+    figure;
+    imshow(ex_BW_staff_dilated);
+    title('Example Segment: After Dilation');
+    
+    figure;
+    imshow(ex_BW_noStaff);
+    title('Example Segment: After Staff Removal');
+    
+    figure;
+    imshow(ex_BW_filled);
+    title('Example Segment: After Morphological Closing');
+    
+    figure;
+    imshow(ex_BW_merged);
+    title('Example Segment: After Final Dilation');
+else
+    warning('No valid segment with at least 5 staff lines was found for the morphological operations example.');
+end
