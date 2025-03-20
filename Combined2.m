@@ -150,13 +150,19 @@ for i = 1:length(staffSegments)
     end
     
     % Create a horizontal string of note labels (sorted left-to-right)
-    notes_str = strjoin(detectedNotes, ' ');
-    
-    % Place the concatenated note string below the image (using normalized coordinates)
-    ax = gca;
-    ax.Units = 'normalized';
-    text(0.5, -0.05, notes_str, 'Units', 'normalized', ...
-         'HorizontalAlignment', 'center', 'Color', 'red', 'FontSize', 14);
+   % Draw bounding boxes on the original image for each detected note head
+for k = 1:length(noteHeads)
+    rectangle('Position', noteHeads(k).BoundingBox, 'EdgeColor', 'yellow', 'LineWidth', 1.5);
+end
+
+% Annotate each note directly at its corresponding note head (using data coordinates)
+offset = 15; % adjust as needed so the label doesn't overlap the note head
+for k = 1:length(noteHeads)
+    pos = noteHeads(k).Centroid;
+    text(pos(1), pos(2) - offset, detectedNotes{k}, 'HorizontalAlignment', 'center', ...
+         'Color', 'red', 'FontSize', 14, 'FontWeight', 'bold');
+end
+
     
     title(['Detected Notes for Staff Segment ' num2str(i)]);
     hold off;
