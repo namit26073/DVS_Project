@@ -14,13 +14,18 @@ BW = imcomplement(BW);
 figure, imshow(BW), title('Binary Image After Thresholding');
 
 % Step 3: Detect Staff Lines Using Morphology
-se_line = strel('line', 100, 0);  % Long horizontal structuring element
-BW_staff = imerode(BW, se_line);  % Extract staff lines
-figure, imshow(BW_staff), title('Detected Staff Lines');
+se_line = strel('line', 10, 0);  % Long horizontal structuring element
+BW_staff = imerode(BW, se_line);  % Initial extraction of staff lines
 
-% Step 4: Remove Staff Lines Without Affecting Note Heads
-BW_noStaff = BW - BW_staff;
-figure, imshow(BW_noStaff), title('Image After Staff Line Removal');
+% Dilate to cover the full line width
+se_line_dilate = strel('line', 15, 0);
+BW_staff_dilated = imdilate(BW_staff, se_line_dilate);
+figure, imshow(BW_staff_dilated), title('Dilated Staff Lines');
+
+% Step 4: Remove Staff Lines
+BW_noStaff = BW & ~BW_staff_dilated;
+figure, imshow(BW_noStaff), title('Image After Full Staff Line Removal');
+
 
 % Step 5: Apply Morphological Closing to Fix Splits in Notes
 se_fill = strel('disk', 3);
