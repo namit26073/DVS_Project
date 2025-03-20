@@ -46,5 +46,5 @@ We developed an Optical Music Recognition (OMR) system focused on accurately ide
 
 ## Personal Statements
 
-### [Your Name]
+### [Namit Garg - 02026535]
 I was responsible for the preprocessing and segmentation stages. My primary focus was on using adaptive thresholding and morphological operations (Lab 4 and Lab 5) to isolate notes effectively. Major challenges involved dealing with text interference. If repeated, I'd explore specialized text-removal methods earlier in development.
