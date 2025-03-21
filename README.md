@@ -76,6 +76,10 @@ Simply finds the Y values of the detected CCs and compares it against the Y valu
 ### Code:
 The code consists of multiple image processing techniques. The reasoning behind their use has been explained in Code_Explanation.md
 
+### Outputs:
+The evidence of the code working is a video in the outputs folder where we show every intermediate step we perform for preprocessing and note detection. The folder also has images of the final outputs for 4 example inputs.
+
+
 
 ---
 
