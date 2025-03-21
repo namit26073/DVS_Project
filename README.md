@@ -60,6 +60,7 @@ Simply finds the Y values of the detected CCs and compares it against the Y valu
 **Limitations:**
 - Difficulty fully removing text annotations, occasionally affecting accuracy.
 - Optimized specifically for full (oval) notes—may require tuning for other note types.
+- Falsely detects edges of the staff lines as notes.
 
 **Future Improvements:**
 
@@ -70,6 +71,10 @@ Simply finds the Y values of the detected CCs and compares it against the Y valu
     - More morphological techniques
 - Detect different scales
     - This could be achieved by specifically looking at the left side of all segments, detecting any sharps or flats and their positions, and assign the corresponding notes the same.
+ 
+### Code:
+The code consists of multiple image processing techniques. The reasoning behind their use has been explained in Code_Explanation.md
+
 
 ---
 
