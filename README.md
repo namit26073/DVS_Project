@@ -102,4 +102,4 @@ I also implemented parameters such as the thresholds for connected components to
 
 Personally, the key limitation with the way noteheads were found is that it relies heavily on the notion of CCs, which means that detecting notes with stems and other symbols in sheet music becomes more complicated. The code also struggled to eliminate all of text, and there were instances where it would detect a fairly round text to be a note too!
 
-Overall, the assignment was quite interesting. My key takeaway from the assignment is that for such scenarios, lots of people would implement machine learning, but with some smart image processing techniques, this could be an as reliable alternative,
+Overall, the assignment was quite interesting. My key takeaway from the assignment is that for such scenarios, lots of people would implement machine learning, but with some smart image processing techniques, this could be an as reliable alternative.
