@@ -43,7 +43,7 @@ Simply finds the Y values of the detected CCs and compares it against the Y valu
 ### Special Instructions to Run:
 
 - Download ZIP folder
-- Run the main script (`Combined2.m`) in MATLAB located in the repository root.
+- Run the main script (`OldMusicSheetConverter.m`) in MATLAB located in the repository root.
 - Replace the image file in the script with any of the images in the images folder to try out how it works on different sheets of music
 
 ### Evidence of Application Working:
