@@ -4,7 +4,7 @@
 
 ### Team Achievements:
 
-We developed an Optical Music Recognition (OMR) system focused on accurately identifying and segmenting full notes from sheet music images.
+We developed an Optical Music Recognition system focused on accurately identifying and segmenting full notes from old/degraded sheet music images.
 
 **Preprocessing Stage:**
 - **Adaptive Binarization**
@@ -50,6 +50,7 @@ Simply finds the Y values of the detected CCs and compares it against the Y valu
 
 - Clearly segmented images demonstrating preprocessing and note isolation are included in the `outputs` directory.
 - MATLAB figures show each processing step, confirming functionality.
+- There is  also a video in the ouput folder which shows how the application runs
 
 ### Application Evaluation:
 
